@@ -1,6 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../models/emotion_model.dart';
+import '../utils/api_service.dart';
+
 class HexColor extends Color {
   static int _getColorFromHex(String hexColor) {
     hexColor = hexColor.toUpperCase().replaceAll("#", "");
@@ -25,6 +28,7 @@ class Chat extends StatefulWidget {
 
 class _ChatState extends State<Chat> {
   final myController = TextEditingController();
+  late dynamic emotionModel;
   final emotionDict = {
     'happy' : ['😀', '😁', '😂', '🤣'],
     'sad': ['😕', '🙁', '😣', '😫'],
@@ -37,21 +41,22 @@ class _ChatState extends State<Chat> {
 
   void _printLatestValue() {
     if (myController.text.isNotEmpty){
-      if (myController.text.length > 4){
-        setState(() {
-          detectedEmotion = "sad";
-        });
+      if(myController.text.length > 6){
+        _getData(myController.text);
+      }else{
+        print("SHORT TEXT");
       }
-      if (myController.text.length > 6){
-        setState(() {
-          detectedEmotion = "happy";
-        });
-      }
-    }
-    if (kDebugMode) {
-      print('The emotion is : $detectedEmotion');
     }
   }
+
+  void _getData(message) async {
+    emotionModel = (await ApiService().getEmotion(message));
+    Future.delayed(const Duration(seconds: 1)).then((value) => setState(() {}));
+    if (kDebugMode) {
+      print(emotionModel);
+    }
+  }
+
 
   @override
   void initState() {
@@ -100,7 +105,7 @@ class _ChatState extends State<Chat> {
                InkWell(
                  onTap: () {
                    setState(() {
-                     myController.text = myController.text + emotionDict[detectedEmotion]![0];
+                     myController.text = myController.text + emotionDict[emotionModel]![0];
                    });
                  },
                  child: const Padding(
