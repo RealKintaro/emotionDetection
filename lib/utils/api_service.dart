@@ -35,7 +35,7 @@ class ApiService {
     var headers = {
       'Content-Type': 'application/json'
     };
-    var request = http.Request('POST', Uri.parse('http://10.0.2.2:8000/predict'));
+    var request = http.Request('POST', Uri.parse('http://10.101.100.128:8000/predict'));
     request.body = json.encode({
       "message": message
     });
